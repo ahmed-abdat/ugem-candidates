@@ -20,82 +20,121 @@ export async function GET(req: NextRequest) {
             justifyContent: "center",
             backgroundColor: "white",
             position: "relative",
+            overflow: "hidden",
           }}
         >
-          {/* Gradient Background */}
+          {/* Background Pattern */}
           <div
             style={{
               position: "absolute",
               inset: 0,
-              background:
-                "linear-gradient(to bottom right, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05))",
+              backgroundImage: "radial-gradient(#e5e7eb 1px, transparent 1px)",
+              backgroundSize: "16px 16px",
+              maskImage:
+                "radial-gradient(ellipse 50% 50% at 50% 50%, black 70%, transparent 100%)",
             }}
           />
 
-          {/* Logo */}
-          <img
-            src="https://i.ibb.co/4Lj0c5D/logo.png"
-            alt="UGEM Logo"
+          {/* Gradient Blobs */}
+          <div
             style={{
-              width: "180px",
-              height: "180px",
-              marginBottom: "2rem",
+              position: "absolute",
+              top: "-40%",
+              right: "-40%",
+              width: "80%",
+              height: "80%",
+              borderRadius: "9999px",
+              background: "rgba(59, 130, 246, 0.05)",
+              filter: "blur(100px)",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              bottom: "-30%",
+              left: "-30%",
+              width: "70%",
+              height: "70%",
+              borderRadius: "9999px",
+              background: "rgba(59, 130, 246, 0.05)",
+              filter: "blur(100px)",
             }}
           />
 
-          {/* Title */}
+          {/* Content Container */}
           <div
             style={{
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              textAlign: "center",
-              padding: "20px",
-              gap: "1rem",
+              zIndex: 10,
+              padding: "40px",
+              background: "rgba(255, 255, 255, 0.5)",
+              borderRadius: "24px",
+              backdropFilter: "blur(10px)",
+              border: "1px solid rgba(59, 130, 246, 0.1)",
             }}
           >
+            {/* Logo */}
+            <img
+              src="https://i.ibb.co/4Lj0c5D/logo.png"
+              alt="UGEM Logo"
+              style={{
+                width: "160px",
+                height: "160px",
+                marginBottom: "2rem",
+                filter: "drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1))",
+              }}
+            />
+
+            {/* Title */}
             <div
               style={{
                 display: "flex",
                 flexDirection: "column",
-                gap: "0.5rem",
+                alignItems: "center",
+                gap: "1rem",
+                textAlign: "center",
               }}
             >
               <h1
                 style={{
-                  fontSize: "72px",
+                  fontSize: "80px",
                   fontWeight: "bold",
-                  background: "linear-gradient(to right, #1a365d, #2563eb)",
+                  background: "linear-gradient(135deg, #3B82F6, #1D4ED8)",
                   backgroundClip: "text",
                   color: "transparent",
                   margin: 0,
+                  lineHeight: 1,
+                  filter: "drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))",
                 }}
               >
                 UGEM
               </h1>
               <p
                 style={{
-                  fontSize: "36px",
-                  fontWeight: "medium",
-                  color: "#1a365d",
+                  fontSize: "32px",
+                  fontWeight: "500",
+                  color: "#1E293B",
                   margin: 0,
+                  maxWidth: "600px",
+                  lineHeight: 1.3,
                 }}
               >
                 Union Générale des Étudiants Mauritaniens
               </p>
+              <p
+                style={{
+                  fontSize: "20px",
+                  color: "#64748B",
+                  margin: 0,
+                  marginTop: "0.5rem",
+                }}
+              >
+                Plateforme d&apos;inscription et de gestion des membres
+              </p>
             </div>
-
-            <p
-              style={{
-                fontSize: "24px",
-                color: "#4b5563",
-                margin: 0,
-                marginTop: "1rem",
-              }}
-            >
-              Plateforme d'inscription et de gestion des membres
-            </p>
           </div>
         </div>
       ),
