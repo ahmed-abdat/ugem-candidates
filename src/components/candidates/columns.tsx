@@ -5,7 +5,6 @@ import { Eye } from "lucide-react";
 import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { ClientOnly } from "@/components/client-only";
 
 export type Candidate = {
@@ -50,27 +49,6 @@ function Actions({ candidate, onView }: ActionsProps) {
 
 export const columns: ColumnDef<Candidate>[] = [
   {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="تحديد الكل"
-        className="translate-y-[2px]"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="تحديد الصف"
-        className="translate-y-[2px]"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
     accessorKey: "image_url",
     header: "الصورة",
     cell: ({ row }) => {
@@ -88,10 +66,14 @@ export const columns: ColumnDef<Candidate>[] = [
               />
             </div>
           ) : (
-            <div className="relative h-10 w-10 rounded-full bg-muted flex items-center justify-center ring-2 ring-primary/10">
-              <span className="text-muted-foreground text-xs">
-                لا توجد صورة
-              </span>
+            <div className="relative h-10 w-10">
+              <Image
+                src="/default_avatar.jpeg"
+                alt="Default Avatar"
+                className="rounded-full object-cover ring-2 ring-primary/10"
+                fill
+                sizes="40px"
+              />
             </div>
           )}
         </div>

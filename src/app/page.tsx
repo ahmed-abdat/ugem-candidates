@@ -1,6 +1,7 @@
 import { ClientOnly } from "@/components/client-only";
 import { CandidatesTable } from "@/components/candidates/candidates-table";
 import { UserWelcome } from "@/components/user-welcome";
+import { NumberTicker } from "@/components/ui/animated-count";
 import { getCandidates } from "./actions";
 import type { Candidate } from "@/components/candidates/columns";
 
@@ -18,17 +19,26 @@ export default async function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 via-gray-100 to-white">
-      <div className=" py-4 md:py-6 space-y-8">
+    <div className="min-h-screen bg-gradient-to-b bg-white">
+      <div className="py-4 md:py-6 space-y-8">
         {/* Hero Section */}
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
             منصة الترشح للإنتخابات الطلابية
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            منصة موحدة لإدارة وتنظيم الإنتخابات الطلابية في الإتحاد العام للطلبة
-            الموريتانيين
-          </p>
+
+          {/* Animated Counter */}
+          <div className="flex flex-col items-center justify-center mt-8 space-y-4">
+            <div className="flex items-center justify-center bg-white/50 backdrop-blur-sm rounded-xl p-8 shadow-sm">
+              <NumberTicker
+                value={candidates?.length || 0}
+                className="text-7xl font-bold tracking-tighter bg-gradient-to-br from-gray-900 to-gray-600 bg-clip-text text-transparent"
+              />
+            </div>
+            <p className="text-lg text-muted-foreground font-medium">
+              عدد المنتسبين المسجلين
+            </p>
+          </div>
         </div>
 
         {/* User Welcome Section */}

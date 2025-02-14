@@ -14,6 +14,7 @@ import {
   AlertCircle,
   Pencil,
   Trash2,
+  Eye,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -36,10 +37,22 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { userStorage } from "@/lib/storage";
 import { ClientOnly } from "@/components/client-only";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 // Profile form schema
 import { z } from "zod";
-import { updateUser, getUserCandidates, deleteCandidate } from "@/app/actions";
+import {
+  updateUser,
+  getUserCandidates,
+  deleteCandidate,
+  deleteUserAccount,
+} from "@/app/actions";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -72,6 +85,7 @@ export default function ProfilePage() {
   const [userData, setUserData] = useState<any>(null);
   const [userCandidates, setUserCandidates] = useState<any[]>([]);
   const [candidateToDelete, setCandidateToDelete] = useState<any>(null);
+  const [selectedCandidate, setSelectedCandidate] = useState<any>(null);
 
   // Initialize form with user data
   const form = useForm<ProfileFormValues>({
@@ -159,9 +173,32 @@ export default function ProfilePage() {
   }
 
   const handleDeleteAccount = async () => {
-    // TODO: Implement account deletion
-    setIsDeleteDialogOpen(false);
-    toast.error("هذه الخاصية غير متوفرة حالياً");
+    if (!userData?.id) {
+      toast.error("يجب تسجيل الدخول لحذف الحساب");
+      return;
+    }
+
+    try {
+      const result = await deleteUserAccount(userData.id);
+
+      if (result.error) {
+        toast.error(result.error);
+        return;
+      }
+
+      // Clear local storage
+      userStorage.clearUser();
+
+      // Redirect to home page
+      router.push("/");
+
+      toast.success("تم حذف الحساب بنجاح");
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      toast.error("حدث خطأ أثناء حذف الحساب");
+    } finally {
+      setIsDeleteDialogOpen(false);
+    }
   };
 
   const handleDeleteCandidate = async () => {
@@ -189,7 +226,7 @@ export default function ProfilePage() {
 
   if (!userData) {
     return (
-      <div className="container max-w-5xl py-10">
+      <div className="max-w-5xl">
         <Card>
           <CardContent className="py-10">
             <div className="flex flex-col items-center justify-center text-center">
@@ -206,7 +243,7 @@ export default function ProfilePage() {
 
   return (
     <ClientOnly>
-      <div className="container max-w-5xl py-10">
+      <div className="max-w-5xl">
         <div className="space-y-8">
           {/* Profile Card */}
           <Card>
@@ -394,9 +431,13 @@ export default function ProfilePage() {
                           className="rounded-full object-cover"
                         />
                       ) : (
-                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                          <User className="w-5 h-5 text-primary" />
-                        </div>
+                        <Image
+                          src="/default_avatar.jpeg"
+                          alt="Default Avatar"
+                          width={40}
+                          height={40}
+                          className="rounded-full object-cover"
+                        />
                       )}
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">
@@ -431,12 +472,11 @@ export default function ProfilePage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-8"
-                          onClick={() =>
-                            router.push(`/candidate/${candidate.id}`)
-                          }
+                          className="h-8 w-8 p-0"
+                          onClick={() => setSelectedCandidate(candidate)}
                         >
-                          عرض
+                          <Eye className="h-4 w-4" />
+                          <span className="sr-only">عرض</span>
                         </Button>
                       </div>
                     </div>
@@ -505,6 +545,113 @@ export default function ProfilePage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Candidate Details Dialog */}
+      <Dialog
+        open={!!selectedCandidate}
+        onOpenChange={(open) => {
+          if (!open) setSelectedCandidate(null);
+        }}
+      >
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-center mb-2">
+              تفاصيل المرشح
+            </DialogTitle>
+            <DialogDescription className="text-center text-muted-foreground">
+              معلومات كاملة عن المرشح وبياناته الشخصية
+            </DialogDescription>
+          </DialogHeader>
+          {selectedCandidate && (
+            <div className="space-y-8">
+              {/* Candidate Image */}
+              <div className="flex flex-col items-center gap-4">
+                {selectedCandidate.image_url ? (
+                  <div className="relative h-40 w-40 rounded-full ring-4 ring-primary/10">
+                    <Image
+                      src={selectedCandidate.image_url}
+                      alt={selectedCandidate.full_name}
+                      className="rounded-full object-cover"
+                      fill
+                      sizes="160px"
+                      priority
+                    />
+                  </div>
+                ) : (
+                  <div className="relative h-40 w-40 rounded-full ring-4 ring-primary/10">
+                    <Image
+                      src="/default_avatar.jpeg"
+                      alt="Default Avatar"
+                      className="rounded-full object-cover"
+                      fill
+                      sizes="160px"
+                      priority
+                    />
+                  </div>
+                )}
+                <h2 className="text-2xl font-bold text-center">
+                  {selectedCandidate.full_name}
+                </h2>
+              </div>
+
+              {/* Candidate Details */}
+              <div className="grid grid-cols-2 gap-6 bg-muted/50 rounded-lg p-6">
+                <div className="space-y-2">
+                  <h4 className="font-medium text-muted-foreground text-sm">
+                    رقم الهاتف
+                  </h4>
+                  <p className="text-lg font-medium">
+                    {selectedCandidate.phone}
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <h4 className="font-medium text-muted-foreground text-sm">
+                    التخصص
+                  </h4>
+                  <p className="text-lg font-medium">
+                    {selectedCandidate.specialty}
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <h4 className="font-medium text-muted-foreground text-sm">
+                    الكلية
+                  </h4>
+                  <p className="text-lg font-medium">
+                    {selectedCandidate.faculty}
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <h4 className="font-medium text-muted-foreground text-sm">
+                    تاريخ التسجيل
+                  </h4>
+                  <p className="text-lg font-medium">
+                    {new Date(selectedCandidate.created_at).toLocaleDateString(
+                      "ar-MA",
+                      {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      }
+                    )}
+                  </p>
+                </div>
+
+                <div className="col-span-2 space-y-2">
+                  <h4 className="font-medium text-muted-foreground text-sm">
+                    العنوان
+                  </h4>
+                  <p className="text-lg font-medium">
+                    {selectedCandidate.address}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </ClientOnly>
   );
 }

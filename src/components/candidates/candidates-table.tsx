@@ -90,15 +90,14 @@ export function CandidatesTable({ initialCandidates }: CandidatesTableProps) {
 
   return (
     <>
-      <div className="rounded-xl border bg-card shadow-sm">
+      <div className="rounded-2xl border bg-white/50 backdrop-blur-sm shadow-sm">
         <div className="p-6">
           <div className="mb-6">
-            <h2 className="text-2xl font-bold tracking-tight">المرشحون</h2>
-            <p className="text-muted-foreground">
-              قائمة بجميع المرشحين المسجلين في النظام
-            </p>
-            <p className="text-sm text-muted-foreground mt-1">
-              {initialCandidates.length} مرشح مسجل
+            <h2 className="text-2xl font-bold tracking-tight bg-gradient-to-br from-gray-900 to-gray-600 bg-clip-text text-transparent">
+              المنتسبين
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              {initialCandidates.length} منتسب مسجل في النظام
             </p>
           </div>
           <DataTable
@@ -121,10 +120,10 @@ export function CandidatesTable({ initialCandidates }: CandidatesTableProps) {
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-center mb-2">
-              تفاصيل المرشح
+              تفاصيل المنتسب
             </DialogTitle>
             <DialogDescription className="text-center text-muted-foreground">
-              معلومات كاملة عن المرشح وبياناته الشخصية
+              المعلومات الشخصية للمنتسب
             </DialogDescription>
           </DialogHeader>
           {selectedCandidate && (
@@ -143,13 +142,18 @@ export function CandidatesTable({ initialCandidates }: CandidatesTableProps) {
                     />
                   </div>
                 ) : (
-                  <div className="h-40 w-40 rounded-full bg-muted flex items-center justify-center ring-4 ring-primary/10">
-                    <span className="text-muted-foreground text-sm">
-                      لا توجد صورة
-                    </span>
+                  <div className="relative h-40 w-40 rounded-full ring-4 ring-primary/10">
+                    <Image
+                      src="/default_avatar.jpeg"
+                      alt="Default Avatar"
+                      className="rounded-full object-cover"
+                      fill
+                      sizes="160px"
+                      priority
+                    />
                   </div>
                 )}
-                <h2 className="text-2xl font-bold text-center">
+                <h2 className="text-2xl font-bold text-center bg-gradient-to-br from-gray-900 to-gray-600 bg-clip-text text-transparent">
                   {selectedCandidate.full_name}
                 </h2>
               </div>

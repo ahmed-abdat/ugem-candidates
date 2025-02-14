@@ -6,6 +6,7 @@ import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { ArrowRight, Upload } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -29,6 +30,7 @@ import {
   candidateSchema,
 } from "@/lib/validations/candidate";
 import { getCandidate, handleCandidateSubmit } from "@/app/actions/candidate";
+import { getUserCandidates } from "@/app/actions";
 import { cn } from "@/lib/utils";
 import { userStorage } from "@/lib/storage";
 
@@ -99,6 +101,34 @@ export function CandidateForm({
     },
     mode: "onSubmit",
   });
+
+  // Check for existing candidate
+  useEffect(() => {
+    async function checkExistingCandidate() {
+      const user = userStorage.getUser();
+      if (user && mode === "create") {
+        try {
+          const { candidates, error } = await getUserCandidates(user.id);
+
+          if (error) {
+            console.error("Error checking candidates:", error);
+            return;
+          }
+
+          if (candidates && candidates.length > 0) {
+            toast.error("لقد إنتسبتم بالفعل", {
+              description: "لا يمكن إنشاء أكثر من حساب منتسب واحد",
+            });
+            router.replace("/profile");
+          }
+        } catch (error) {
+          console.error("Error checking candidates:", error);
+        }
+      }
+    }
+
+    checkExistingCandidate();
+  }, [mode, router]);
 
   // Get user data from storage on client side only
   useEffect(() => {
@@ -276,6 +306,17 @@ export function CandidateForm({
         />
       </div>
 
+      <div className="text-center space-y-1.5">
+        <h2 className="text-2xl font-bold tracking-tight">
+          {mode === "edit" ? "تعديل بيانات المنتسب" : "تسجيل منتسب جديد"}
+        </h2>
+        <p className="text-sm text-muted-foreground">
+          {mode === "edit"
+            ? "قم بتعديل بيانات المنتسب"
+            : "قم بإدخال بيانات المنتسب الجديد"}
+        </p>
+      </div>
+
       <AuthMessage type="error" message={error} />
 
       <Form {...form}>
@@ -440,7 +481,7 @@ export function CandidateForm({
               <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
             ) : (
               <>
-                {mode === "edit" ? "حفظ التغييرات" : "إنشاء مرشح"}
+                {mode === "edit" ? "حفظ التغييرات" : "تسجيل منتسب"}
                 <ArrowRight className="mr-2 h-4 w-4 rotate-180" />
               </>
             )}

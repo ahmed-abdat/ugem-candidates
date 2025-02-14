@@ -95,16 +95,22 @@ export function DataTable<TData, TValue>({
             onChange={(event) =>
               table.getColumn("full_name")?.setFilterValue(event.target.value)
             }
-            className="max-w-sm"
+            className="max-w-sm bg-white/50 border-gray-200 backdrop-blur-sm focus-visible:ring-primary"
           />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-4">
+              <Button
+                variant="outline"
+                className="ml-4 bg-white/50 border-gray-200 backdrop-blur-sm"
+              >
                 عرض الأعمدة
                 <ChevronDown className="mr-2 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[200px]">
+            <DropdownMenuContent
+              align="end"
+              className="w-[200px] bg-white/80 backdrop-blur-sm"
+            >
               {table.getAllColumns().map((column) => {
                 if (!column.getCanHide()) return null;
                 return (
@@ -139,13 +145,13 @@ export function DataTable<TData, TValue>({
         </div>
       </ClientOnly>
 
-      <div className="rounded-lg border bg-card">
+      <div className="rounded-xl overflow-hidden border border-gray-200 bg-white/80 backdrop-blur-sm">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow
                 key={headerGroup.id}
-                className="border-b bg-muted/50 hover:bg-muted/50"
+                className="border-b bg-white/50 hover:bg-white/50"
               >
                 {headerGroup.headers.map((header) => (
                   <TableHead
@@ -171,7 +177,7 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="border-b hover:bg-muted/50 transition-colors"
+                  className="border-b hover:bg-gray-50/50 transition-colors"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="pr-6 pl-4 py-3">
@@ -200,18 +206,14 @@ export function DataTable<TData, TValue>({
       </div>
 
       <ClientOnly>
-        <div className="flex items-center justify-between py-4">
-          <div className="text-sm text-muted-foreground">
-            {table.getFilteredSelectedRowModel().rows.length} من{" "}
-            {table.getFilteredRowModel().rows.length} مرشح محدد.
-          </div>
+        <div className="flex items-center justify-end py-4">
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
               size="sm"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
-              className="h-8"
+              className="h-8 bg-white/50 border-gray-200 backdrop-blur-sm"
             >
               السابق
             </Button>
@@ -220,7 +222,7 @@ export function DataTable<TData, TValue>({
               size="sm"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
-              className="h-8"
+              className="h-8 bg-white/50 border-gray-200 backdrop-blur-sm"
             >
               التالي
             </Button>

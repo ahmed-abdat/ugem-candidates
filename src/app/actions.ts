@@ -4,6 +4,7 @@ import { db } from "@/config/firebase";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  deleteUser as deleteFirebaseUser,
 } from "firebase/auth";
 import {
   collection,
@@ -17,6 +18,7 @@ import {
   updateDoc,
   deleteDoc,
   orderBy,
+  writeBatch,
 } from "firebase/firestore";
 import { auth } from "@/config/firebase";
 import type { RegisterFormValues } from "@/lib/validations/register";
@@ -321,6 +323,40 @@ export async function updateUser(
     console.error("Error updating user:", error);
     return {
       error: error instanceof Error ? error.message : "فشل في تحديث البيانات",
+    };
+  }
+}
+
+export async function deleteUserAccount(userId: string) {
+  try {
+    // Delete user's candidates first
+    const candidatesRef = collection(db, "candidates");
+    const q = query(candidatesRef, where("creator_id", "==", userId));
+    const querySnapshot = await getDocs(q);
+
+    // Delete all candidates in a batch
+    const batch = writeBatch(db);
+    querySnapshot.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+    await batch.commit();
+
+    // Delete user document from Firestore
+    const userRef = doc(db, "users", userId);
+    await deleteDoc(userRef);
+
+    // Delete user from Firebase Auth
+    const user = auth.currentUser;
+    if (user) {
+      await deleteFirebaseUser(user);
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    return {
+      error:
+        error instanceof Error ? error.message : "Failed to delete account",
     };
   }
 }

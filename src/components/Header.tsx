@@ -26,6 +26,7 @@ import { auth } from "@/config/firebase";
 import { signOut } from "firebase/auth";
 import { userStorage } from "@/lib/storage";
 import { ClientOnly } from "@/components/client-only";
+import { getUserCandidates } from "@/app/actions";
 
 interface UserData {
   id: string;
@@ -33,22 +34,32 @@ interface UserData {
   email: string;
 }
 
-const navigation = [
-  { name: "الرئيسية", href: "/" },
-  { name: "تسجيل مرشح", href: "/candidate/register" },
-];
-
 export function Header() {
   const router = useRouter();
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [userData, setUserData] = useState<UserData | null>(null);
+  const [hasCandidate, setHasCandidate] = useState(false);
 
   useEffect(() => {
     // Get user data from storage on client side only
     const user = userStorage.getUser();
     setUserData(user);
+
+    // Check if user has a candidate
+    async function checkCandidate() {
+      if (user) {
+        try {
+          const { candidates } = await getUserCandidates(user.id);
+          setHasCandidate(Boolean(candidates && candidates.length > 0));
+        } catch (error) {
+          console.error("Error checking candidate:", error);
+        }
+      }
+    }
+
+    checkCandidate();
   }, []);
 
   useEffect(() => {
@@ -67,12 +78,20 @@ export function Header() {
       await signOut(auth);
       userStorage.clearUser();
       setUserData(null);
+      setHasCandidate(false);
       setIsOpen(false);
       router.push("/login");
     } catch (error) {
       console.error("Error signing out:", error);
     }
   };
+
+  // Navigation items based on candidate status
+  const navigation = [
+    ...(!hasCandidate && userData
+      ? [{ name: "تسجيل منتسب", href: "/candidate/register" }]
+      : []),
+  ];
 
   return (
     <header
