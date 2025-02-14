@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
-
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -63,73 +59,103 @@
   }
 }
 
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
 
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: var(--radius);
+}
 
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary));
+  border-radius: var(--radius);
+  border: 2px solid transparent;
+  background-clip: content-box;
+  transition: all 0.2s ease;
+}
 
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.8);
+  cursor: pointer;
+}
 
-  /* loader css */
+/* Text Selection Styles */
+::selection {
+  background-color: hsl(var(--primary) / 0.15);
+  color: hsl(var(--primary));
+}
 
-  .loader {
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #fff;
+::-moz-selection {
+  background-color: hsl(var(--primary) / 0.15);
+  color: hsl(var(--primary));
+}
+
+/* loader css */
+
+.loader {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+.spinner {
+  width: 56px;
+  height: 56px;
+  display: grid;
+  border: 3px solid #0000;
+  border-radius: 50%;
+  border-right-color: var(--primary-color);
+  -webkit-animation: spinner-a4dj62 1s infinite linear;
+  animation: spinner-a4dj62 1s infinite linear;
+}
+
+.spinner::before,
+.spinner::after {
+  content: "";
+  grid-area: 1/1;
+  margin: 3px;
+  border: inherit;
+  border-radius: 50%;
+  -webkit-animation: spinner-a4dj62 2s infinite;
+  animation: spinner-a4dj62 2s infinite;
+}
+
+.spinner::after {
+  margin: 8px;
+  -webkit-animation-duration: 3s;
+  animation-duration: 3s;
+}
+
+@-webkit-keyframes spinner-a4dj62 {
+  100% {
+    -webkit-transform: rotate(1turn);
+    transform: rotate(1turn);
   }
-  .spinner {
-    width: 56px;
-    height: 56px;
-    display: grid;
-    border: 3px solid #0000;
-    border-radius: 50%;
-    border-right-color: var(--primary-color) ;
-    -webkit-animation: spinner-a4dj62 1s infinite linear;
-            animation: spinner-a4dj62 1s infinite linear;
-   }
-   
-   .spinner::before,
-   .spinner::after {
-    content: "";
-    grid-area: 1/1;
-    margin: 3px;
-    border: inherit;
-    border-radius: 50%;
-    -webkit-animation: spinner-a4dj62 2s infinite;
-            animation: spinner-a4dj62 2s infinite;
-   }
-   
-   .spinner::after {
-    margin: 8px;
-    -webkit-animation-duration: 3s;
-            animation-duration: 3s;
-   }
-   
-   @-webkit-keyframes spinner-a4dj62 {
-    100% {
-     -webkit-transform: rotate(1turn);
-             transform: rotate(1turn);
-    }
-   }
-   
-   @keyframes spinner-a4dj62 {
-    100% {
-     -webkit-transform: rotate(1turn);
-             transform: rotate(1turn);
-    }
-   }
+}
 
-   /* ? matieres option style */
+@keyframes spinner-a4dj62 {
+  100% {
+    -webkit-transform: rotate(1turn);
+    transform: rotate(1turn);
+  }
+}
 
-   [data-radix-popper-content-wrapper] {
-   width: 95%;
+/* ? matieres option style */
+
+[data-radix-popper-content-wrapper] {
+  width: 95%;
 }
 
 @media screen and (min-width: 640px) {
-    [data-radix-popper-content-wrapper] {
-        width: 40%;
-    }
-  
+  [data-radix-popper-content-wrapper] {
+    width: 40%;
+  }
 }
 
 @layer base {

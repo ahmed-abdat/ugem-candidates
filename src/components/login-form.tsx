@@ -23,6 +23,7 @@ import { LoginFormValues, loginSchema } from "@/lib/validations/login";
 import { loginUser } from "@/app/actions";
 import { cn } from "@/lib/utils";
 import { userStorage } from "@/lib/storage";
+import { toast } from "sonner";
 
 interface AuthMessageProps {
   type: "error" | "success";
@@ -75,7 +76,11 @@ export function LoginForm() {
       if (result?.success && result.user) {
         console.log("Storing user data:", result.user);
         userStorage.setUser(result.user);
-        router.replace("/");
+        setTimeout(() => {
+          router.replace("/");
+          toast.success("تم تسجيل الدخول بنجاح");
+          router.refresh();
+        }, 1000);
       }
     } catch (error) {
       console.error("Login error:", error);

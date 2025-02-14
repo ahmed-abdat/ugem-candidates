@@ -11,7 +11,7 @@ export default function AuthLayout({
       <div className="fixed inset-0 bg-gradient-to-b from-gray-50/80 via-gray-100/50 to-gray-200/80 backdrop-blur-[2px]" />
 
       {/* Main Content */}
-      <main className="relative flex-1 flex items-center justify-center p-4 overflow-y-auto">
+      <main className="relative flex-1 flex items-center justify-center overflow-y-auto">
         <div className="w-full max-w-md my-auto">
           {/* Card Container with improved glass effect */}
           <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 p-6">
