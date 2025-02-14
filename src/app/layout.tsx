@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Tajawal } from "next/font/google";
 import "./globals.css";
 
@@ -13,9 +13,65 @@ const tajawal = Tajawal({
   variable: "--font-tajawal",
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: "#ffffff",
+};
+
 export const metadata: Metadata = {
   title: "الإتحاد العام للطلبة الموريتانيين - UGEM",
-  description: "المنصة الرسمية للإتحاد العام للطلبة الموريتانيين",
+  description:
+    "المنصة الرسمية للإتحاد العام للطلبة الموريتانيين - منصة تسجيل وإدارة المنتسبين",
+  keywords: [
+    "UGEM",
+    "الإتحاد العام للطلبة الموريتانيين",
+    "طلاب موريتانيا",
+    "تسجيل المنتسبين",
+    "منصة الطلاب",
+  ],
+  authors: [{ name: "UGEM", url: "https://ugem2006.net/" }],
+  creator: "UGEM",
+  publisher: "UGEM",
+  metadataBase: new URL("https://ugem2006.net/"),
+  openGraph: {
+    type: "website",
+    locale: "ar_MA",
+    url: "https://ugem2006.net/",
+    title: "الإتحاد العام للطلبة الموريتانيين - UGEM",
+    description:
+      "المنصة الرسمية للإتحاد العام للطلبة الموريتانيين - منصة تسجيل وإدارة المنتسبين",
+    siteName: "UGEM",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "UGEM - الإتحاد العام للطلبة الموريتانيين",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "الإتحاد العام للطلبة الموريتانيين - UGEM",
+    description:
+      "المنصة الرسمية للإتحاد العام للطلبة الموريتانيين - منصة تسجيل وإدارة المنتسبين",
+    images: ["/og-image.png"],
+    creator: "@ugem",
+    site: "@ugem",
+  },
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+    other: {
+      rel: "apple-touch-icon-precomposed",
+      url: "/apple-touch-icon-precomposed.png",
+    },
+  },
+  category: "education",
 };
 
 export default function RootLayout({
@@ -42,9 +98,7 @@ export default function RootLayout({
 
         <Header />
         <main className="flex-1 flex flex-col relative">
-          <div className="p-3 md:p-6 flex-1 flex flex-col">
-            {children}
-          </div>
+          <div className="p-3 md:p-6 flex-1 flex flex-col">{children}</div>
         </main>
         <Footer />
         <Toaster
