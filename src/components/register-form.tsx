@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { ArrowRight } from "lucide-react";
@@ -88,7 +89,18 @@ export function RegisterForm() {
   }
 
   return (
-    <div className="w-full space-y-4">
+    <div className="w-full space-y-6">
+      <div className="flex justify-center">
+        <Image
+          src="/logo.png"
+          alt="UGEM Logo"
+          width={120}
+          height={120}
+          className="mb-2"
+          priority
+        />
+      </div>
+
       <div className="flex flex-col space-y-1.5 text-center">
         <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">
           إنشاء حساب جديد

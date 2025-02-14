@@ -3,6 +3,7 @@ import { Tajawal } from "next/font/google";
 import "./globals.css";
 
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 
 // Configure Tajawal font for Arabic text
 const tajawal = Tajawal({
@@ -24,10 +25,11 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       <body
-        className={`${tajawal.variable} font-sans min-h-screen bg-gradient-to-b from-gray-50 via-gray-100 to-gray-200 antialiased`}
+        className={`${tajawal.variable} font-sans min-h-screen bg-gradient-to-b from-gray-50 via-gray-100 to-gray-200 antialiased flex flex-col`}
       >
         <Header />
-        {children}
+        <main className="flex-1 md:py-4 py-2">{children}</main>
+        <Footer />
       </body>
     </html>
   );

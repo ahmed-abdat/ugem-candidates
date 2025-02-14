@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { ArrowRight, Upload } from "lucide-react";
@@ -17,11 +18,28 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   CandidateFormValues,
   candidateSchema,
 } from "@/lib/validations/candidate";
-import { createCandidate } from "@/app/actions";
+import { getCandidate, handleCandidateSubmit } from "@/app/actions/candidate";
 import { cn } from "@/lib/utils";
+import { userStorage } from "@/lib/storage";
+
+const faculties = [
+  { value: "كلية العلوم", label: "كلية العلوم" },
+  { value: "كلية الاقتصاد", label: "كلية الاقتصاد" },
+  { value: "كلية الأداب", label: "كلية الأداب" },
+  { value: "كلية الطب", label: "كلية الطب" },
+  { value: "ISCAE", label: "ISCAE" },
+  { value: "SupNum", label: "SupNum" },
+] as const;
 
 interface AuthMessageProps {
   type: "error" | "success";
@@ -45,12 +63,28 @@ function AuthMessage({ type, message }: AuthMessageProps) {
   );
 }
 
-export function CandidateForm() {
+interface UserData {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+}
+
+interface CandidateFormProps {
+  mode?: "create" | "edit";
+  candidateId?: string;
+}
+
+export function CandidateForm({
+  mode = "create",
+  candidateId,
+}: CandidateFormProps) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
 
   const form = useForm<CandidateFormValues>({
     resolver: zodResolver(candidateSchema),
@@ -61,8 +95,83 @@ export function CandidateForm() {
       faculty: "",
       address: "",
       image_url: "",
+      creator_id: "",
     },
+    mode: "onSubmit",
   });
+
+  // Get user data from storage on client side only
+  useEffect(() => {
+    const user = userStorage.getUser();
+    if (user) {
+      setUserData(user);
+      // Only set the full name for new candidates
+      if (mode === "create") {
+        form.setValue("full_name", `${user.first_name} ${user.last_name}`);
+      }
+    } else {
+      router.replace("/login");
+    }
+  }, [form, router, mode]);
+
+  // Fetch candidate data in edit mode
+  useEffect(() => {
+    const fetchCandidateData = async () => {
+      if (mode === "edit" && candidateId) {
+        try {
+          setIsPending(true);
+          const candidateData = await getCandidate(candidateId);
+
+          if (!candidateData) {
+            setError("المرشح غير موجود");
+            router.push("/profile");
+            return;
+          }
+
+          // Check permission
+          const user = userStorage.getUser();
+          if (!user || candidateData.creator_id !== user.id) {
+            setError("ليس لديك صلاحية تعديل هذا المرشح");
+            router.push("/profile");
+            return;
+          }
+
+          // Set preview URL if image exists
+          if (candidateData.image_url) {
+            setPreviewUrl(candidateData.image_url);
+          }
+
+          // Reset form with candidate data
+          form.reset({
+            full_name: candidateData.full_name,
+            phone: candidateData.phone,
+            specialty: candidateData.specialty,
+            faculty: candidateData.faculty,
+            address: candidateData.address,
+            image_url: candidateData.image_url,
+            creator_id: candidateData.creator_id,
+          });
+        } catch (error) {
+          console.error("Error fetching candidate:", error);
+          setError("حدث خطأ أثناء جلب بيانات المرشح");
+          router.push("/profile");
+        } finally {
+          setIsPending(false);
+        }
+      }
+    };
+
+    fetchCandidateData();
+  }, [candidateId, mode, router, form]);
+
+  // Show loading state while checking authentication
+  if (typeof window !== "undefined" && !userData) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-r-transparent" />
+      </div>
+    );
+  }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -103,22 +212,50 @@ export function CandidateForm() {
       setError(null);
       setIsPending(true);
 
-      // Upload image if selected
-      if (imageFile) {
-        const imageUrl = await uploadImage(imageFile);
-        values.image_url = imageUrl;
+      if (!userData) {
+        setError("يجب تسجيل الدخول");
+        return;
       }
 
-      const result = await createCandidate(values);
-      if (result?.error) {
+      // Add creator_id to the form values
+      const candidateData = {
+        ...values,
+        creator_id: userData.id,
+      };
+
+      // Upload image if selected
+      if (imageFile) {
+        try {
+          const imageUrl = await uploadImage(imageFile);
+          candidateData.image_url = imageUrl;
+        } catch (uploadError) {
+          setError("فشل في رفع الصورة");
+          return;
+        }
+      }
+
+      // Use the new action
+      const result = await handleCandidateSubmit(
+        candidateData,
+        userData.id,
+        mode,
+        mode === "edit" ? candidateId : undefined
+      );
+
+      if (result.error) {
         setError(result.error);
         return;
       }
 
-      // Redirect to success page
-      router.replace("/success");
+      // Navigate based on mode
+      if (mode === "edit") {
+        router.push("/profile");
+      } else {
+        router.push("/");
+      }
+      router.refresh();
     } catch (error) {
-      console.error(error);
+      console.error("Submission error:", error);
       setError(error instanceof Error ? error.message : "حدث خطأ ما");
     } finally {
       setIsPending(false);
@@ -126,15 +263,17 @@ export function CandidateForm() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Form Header */}
-      <div className="space-y-2 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-          تسجيل مرشح جديد
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          أدخل بيانات المرشح لإنشاء ملف جديد
-        </p>
+    <div className="w-full max-w-md mx-auto space-y-6 bg-card rounded-lg shadow-sm">
+      {/* Logo */}
+      <div className="flex justify-center">
+        <Image
+          src="/logo.png"
+          alt="UGEM Logo"
+          width={120}
+          height={120}
+          className="mb-2"
+          priority
+        />
       </div>
 
       <AuthMessage type="error" message={error} />
@@ -143,7 +282,7 @@ export function CandidateForm() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           {/* Image Upload */}
           <div className="space-y-2">
-            <FormLabel className="text-sm">الصورة (اختياري)</FormLabel>
+            <FormLabel className="text-sm">الصورة الشخصية (اختياري)</FormLabel>
             <div className="flex items-center justify-center">
               <label
                 htmlFor="image-upload"
@@ -154,11 +293,15 @@ export function CandidateForm() {
                 )}
               >
                 {previewUrl ? (
-                  <img
-                    src={previewUrl}
-                    alt="Preview"
-                    className="absolute inset-0 w-full h-full object-cover rounded-lg"
-                  />
+                  <div className="relative w-32 h-32">
+                    <Image
+                      src={previewUrl}
+                      alt="Preview"
+                      fill
+                      className="object-cover rounded-lg"
+                      sizes="128px"
+                    />
+                  </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center p-4 text-center">
                     <Upload className="w-8 h-8 mb-2 text-muted-foreground" />
@@ -223,13 +366,28 @@ export function CandidateForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm">الكلية</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="h-10 text-right transition-colors focus:border-primary"
-                      placeholder="أدخل اسم الكلية"
-                      {...field}
-                    />
-                  </FormControl>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    value={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="h-10 text-right transition-colors focus:border-primary">
+                        <SelectValue placeholder="اختر الكلية" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {faculties.map((faculty) => (
+                        <SelectItem
+                          key={faculty.value}
+                          value={faculty.value}
+                          className="text-right"
+                        >
+                          {faculty.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage className="text-xs" />
                 </FormItem>
               )}
@@ -282,7 +440,7 @@ export function CandidateForm() {
               <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
             ) : (
               <>
-                إنشاء مرشح
+                {mode === "edit" ? "حفظ التغييرات" : "إنشاء مرشح"}
                 <ArrowRight className="mr-2 h-4 w-4 rotate-180" />
               </>
             )}

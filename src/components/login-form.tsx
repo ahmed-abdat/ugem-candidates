@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { ArrowRight } from "lucide-react";
@@ -21,6 +22,7 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { LoginFormValues, loginSchema } from "@/lib/validations/login";
 import { loginUser } from "@/app/actions";
 import { cn } from "@/lib/utils";
+import { userStorage } from "@/lib/storage";
 
 interface AuthMessageProps {
   type: "error" | "success";
@@ -63,14 +65,20 @@ export function LoginForm() {
       setIsPending(true);
 
       const result = await loginUser(values);
+      console.log("Login result:", result);
+
       if (result?.error) {
         setError(result.error);
         return;
       }
 
-      // Redirect to root page
-      router.replace("/");
+      if (result?.success && result.user) {
+        console.log("Storing user data:", result.user);
+        userStorage.setUser(result.user);
+        router.replace("/");
+      }
     } catch (error) {
+      console.error("Login error:", error);
       setError(error instanceof Error ? error.message : "حدث خطأ ما");
     } finally {
       setIsPending(false);
@@ -78,13 +86,25 @@ export function LoginForm() {
   }
 
   return (
-    <div className="w-full space-y-4">
+    <div className="w-full space-y-6">
+      {/* Logo */}
+      <div className="flex justify-center">
+        <Image
+          src="/logo.png"
+          alt="UGEM Logo"
+          width={120}
+          height={120}
+          className="mb-2"
+          priority
+        />
+      </div>
+
       <div className="flex flex-col space-y-1.5 text-center">
         <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">
           تسجيل الدخول
         </h1>
         <p className="text-xs sm:text-sm text-muted-foreground">
-          أدخل بياناتك لتسجيل الدخول إلى حسابك
+          أدخل بريدك الإلكتروني وكلمة المرور لتسجيل الدخول
         </p>
       </div>
 
@@ -151,7 +171,7 @@ export function LoginForm() {
                 href="/register"
                 className="font-medium text-primary hover:underline"
               >
-                إنشاء حساب جديد
+                إنشاء حساب
               </Link>
             </p>
           </div>

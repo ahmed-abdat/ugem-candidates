@@ -13,11 +13,24 @@ import {
   doc,
   setDoc,
   addDoc,
+  getDoc,
+  updateDoc,
+  deleteDoc,
+  orderBy,
 } from "firebase/firestore";
 import { auth } from "@/config/firebase";
 import type { RegisterFormValues } from "@/lib/validations/register";
 import type { LoginFormValues } from "@/lib/validations/login";
 import type { CandidateFormValues } from "@/lib/validations/candidate";
+
+interface UserData {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  created_at: string;
+  updated_at: string;
+}
 
 export async function isUserExist(email: string) {
   try {
@@ -25,7 +38,7 @@ export async function isUserExist(email: string) {
     const q = query(usersRef, where("email", "==", email));
     const querySnapshot = await getDocs(q);
 
-    return querySnapshot.docs[0]?.data();
+    return querySnapshot.docs[0]?.data() as UserData | undefined;
   } catch (error) {
     console.error("Error checking user existence:", error);
     throw new Error("Failed to check user existence");
@@ -43,16 +56,18 @@ export async function signupUser(values: RegisterFormValues) {
 
     // Create a user document in Firestore
     const userDoc = doc(db, "users", userCredential.user.uid);
-    await setDoc(userDoc, {
+    const userData: UserData = {
       id: userCredential.user.uid,
       first_name: values.first_name,
       last_name: values.last_name,
       email: values.email,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
-    });
+    };
 
-    return { success: true };
+    await setDoc(userDoc, userData);
+
+    return { success: true, user: userData };
   } catch (error) {
     console.error("Error during signup:", error);
     return {
@@ -71,13 +86,13 @@ export async function loginUser(values: LoginFormValues) {
     );
 
     // Get user data from Firestore
-    const userDoc = doc(db, "users", userCredential.user.uid);
-    const userData = await getDocs(
-      query(collection(db, "users"), where("id", "==", userCredential.user.uid))
-    );
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("id", "==", userCredential.user.uid));
+    const querySnapshot = await getDocs(q);
 
-    if (!userData.empty) {
-      return { success: true, user: userData.docs[0].data() };
+    if (!querySnapshot.empty) {
+      const userData = querySnapshot.docs[0].data() as UserData;
+      return { success: true, user: userData };
     }
 
     return { error: "لم يتم العثور على بيانات المستخدم" };
@@ -89,11 +104,19 @@ export async function loginUser(values: LoginFormValues) {
   }
 }
 
-export async function createCandidate(values: CandidateFormValues) {
+export async function createCandidate(
+  values: CandidateFormValues,
+  userId: string
+) {
   try {
+    if (!userId) {
+      return { error: "يجب تسجيل الدخول لإنشاء مرشح" };
+    }
+
     // Add the candidate to Firestore
     const docRef = await addDoc(collection(db, "candidates"), {
       ...values,
+      creator_id: userId,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     });
@@ -103,6 +126,201 @@ export async function createCandidate(values: CandidateFormValues) {
     console.error("Error creating candidate:", error);
     return {
       error: error instanceof Error ? error.message : "فشل في إنشاء المرشح",
+    };
+  }
+}
+
+export async function checkCandidatePermission(
+  candidateId: string,
+  userId: string
+) {
+  try {
+    const candidateRef = doc(db, "candidates", candidateId);
+    const candidateSnap = await getDoc(candidateRef);
+
+    if (!candidateSnap.exists()) {
+      return { error: "المرشح غير موجود" };
+    }
+
+    const candidateData = candidateSnap.data();
+    return { hasPermission: candidateData.creator_id === userId };
+  } catch (error) {
+    console.error("Error checking permissions:", error);
+    return { error: "فشل في التحقق من الصلاحيات" };
+  }
+}
+
+export async function updateCandidate(
+  candidateId: string,
+  userId: string,
+  values: Partial<CandidateFormValues>
+) {
+  console.log("Attempting to update candidate:", {
+    candidateId,
+    userId,
+    values,
+  });
+
+  try {
+    const permission = await checkCandidatePermission(candidateId, userId);
+    console.log("Update permission check result:", permission);
+
+    if (permission.error) {
+      console.log("Update permission error:", permission.error);
+      return { error: permission.error };
+    }
+
+    if (!permission.hasPermission) {
+      console.log("Update permission denied for user:", userId);
+      return { error: "ليس لديك صلاحية تعديل هذا المرشح" };
+    }
+
+    const candidateRef = doc(db, "candidates", candidateId);
+    await updateDoc(candidateRef, {
+      ...values,
+      updated_at: new Date().toISOString(),
+    });
+
+    console.log("Candidate updated successfully:", candidateId);
+    return { success: true };
+  } catch (error) {
+    console.error("Error updating candidate:", error);
+    return {
+      error: error instanceof Error ? error.message : "فشل في تحديث المرشح",
+    };
+  }
+}
+
+export async function deleteCandidate(candidateId: string, userId: string) {
+  console.log("Deleting candidate:", { candidateId, userId });
+
+  try {
+    if (!userId) {
+      return { error: "يجب تسجيل الدخول لحذف المرشح" };
+    }
+
+    // Check permissions
+    const candidateRef = doc(db, "candidates", candidateId);
+    const candidateSnap = await getDoc(candidateRef);
+
+    if (!candidateSnap.exists()) {
+      return { error: "المرشح غير موجود" };
+    }
+
+    const candidateData = candidateSnap.data();
+    if (candidateData.creator_id !== userId) {
+      return { error: "ليس لديك صلاحية حذف هذا المرشح" };
+    }
+
+    // Delete the candidate
+    await deleteDoc(candidateRef);
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting candidate:", error);
+    return {
+      error: error instanceof Error ? error.message : "فشل في حذف المرشح",
+    };
+  }
+}
+
+export async function getCandidates() {
+  try {
+    const candidatesRef = collection(db, "candidates");
+    const q = query(candidatesRef, orderBy("created_at", "desc"));
+    const querySnapshot = await getDocs(q);
+
+    const candidatesData: any[] = [];
+    querySnapshot.forEach((doc) => {
+      candidatesData.push({ id: doc.id, ...doc.data() });
+    });
+
+    return { candidates: candidatesData };
+  } catch (error) {
+    console.error("Error fetching candidates:", error);
+    return { error: "Failed to fetch candidates" };
+  }
+}
+
+export async function getUserCandidates(userId: string) {
+  console.log("Fetching user candidates for user:", userId);
+  if (!userId) {
+    return { error: "يجب تسجيل الدخول لإرجاع المرشحات" };
+  }
+  try {
+    const candidatesRef = collection(db, "candidates");
+    const q = query(
+      candidatesRef,
+      where("creator_id", "==", userId),
+      orderBy("created_at", "desc")
+    );
+    const querySnapshot = await getDocs(q);
+
+    const candidatesData: any[] = [];
+    querySnapshot.forEach((doc) => {
+      candidatesData.push({ id: doc.id, ...doc.data() });
+    });
+
+    return { candidates: candidatesData };
+  } catch (error) {
+    console.error("Error fetching user candidates:", error);
+    return { error: "Failed to fetch candidates" };
+  }
+}
+
+export async function updateUser(
+  userId: string,
+  data: {
+    first_name: string;
+    last_name: string;
+  }
+) {
+  console.log("Updating user:", { userId, data });
+
+  try {
+    if (!userId) {
+      return { error: "يجب تسجيل الدخول لتحديث البيانات" };
+    }
+
+    // Validate input data
+    if (!data.first_name || !data.last_name) {
+      return { error: "جميع الحقول مطلوبة" };
+    }
+
+    if (data.first_name.length < 2 || data.last_name.length < 2) {
+      return { error: "يجب أن يتكون كل اسم من حرفين على الأقل" };
+    }
+
+    // Check if user exists
+    const userRef = doc(db, "users", userId);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      return { error: "المستخدم غير موجود" };
+    }
+
+    // Update user data
+    await updateDoc(userRef, {
+      first_name: data.first_name,
+      last_name: data.last_name,
+      updated_at: new Date().toISOString(),
+    });
+
+    // Get updated user data
+    const updatedUserSnap = await getDoc(userRef);
+    const userData = updatedUserSnap.data();
+
+    return {
+      success: true,
+      user: {
+        id: userId,
+        ...userData,
+      },
+    };
+  } catch (error) {
+    console.error("Error updating user:", error);
+    return {
+      error: error instanceof Error ? error.message : "فشل في تحديث البيانات",
     };
   }
 }

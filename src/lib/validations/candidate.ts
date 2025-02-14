@@ -22,6 +22,9 @@ export const candidateSchema = z.object({
     .min(1, "عنوان السكن مطلوب")
     .min(3, "يجب أن يتكون العنوان من 3 أحرف على الأقل"),
   image_url: z.string().optional(),
+  creator_id: z.string().optional(),
+  created_at: z.string().optional(),
+  updated_at: z.string().optional(),
 });
 
 export type CandidateFormValues = z.infer<typeof candidateSchema>;
