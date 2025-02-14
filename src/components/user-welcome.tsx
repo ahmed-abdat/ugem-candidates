@@ -92,8 +92,8 @@ export function UserWelcome() {
                 className="bg-primary hover:bg-primary/90 shadow-lg hover:shadow-primary/25 transition-all duration-200 group w-full sm:w-auto"
               >
                 <Link href="/login" className="flex items-center gap-2">
-                  <ArrowRight className="w-4 h-4 rotate-180 transition-transform group-hover:-translate-x-1" />
                   تسجيل الدخول
+                  <ArrowRight className="w-4 h-4 rotate-180 transition-transform group-hover:-translate-x-1" />
                 </Link>
               </Button>
               <Button

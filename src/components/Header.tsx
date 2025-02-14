@@ -210,7 +210,6 @@ export function Header() {
                   asChild
                 >
                   <Link href="/login" className="flex items-center gap-2">
-                    <LogIn className="w-4 h-4" />
                     تسجيل الدخول
                     <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
                   </Link>
@@ -319,8 +318,8 @@ export function Header() {
                         asChild
                       >
                         <Link href="/login" onClick={() => setIsOpen(false)}>
-                          <LogIn className="w-4 h-4" />
                           تسجيل الدخول
+                          <ArrowLeft className="w-4 h-4" />
                         </Link>
                       </Button>
                       <Button
