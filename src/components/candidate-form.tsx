@@ -102,34 +102,6 @@ export function CandidateForm({
     mode: "onSubmit",
   });
 
-  // Check for existing candidate
-  useEffect(() => {
-    async function checkExistingCandidate() {
-      const user = userStorage.getUser();
-      if (user && mode === "create") {
-        try {
-          const { candidates, error } = await getUserCandidates(user.id);
-
-          if (error) {
-            console.error("Error checking candidates:", error);
-            return;
-          }
-
-          if (candidates && candidates.length > 0) {
-            toast.error("لقد إنتسبتم بالفعل", {
-              description: "لا يمكن إنشاء أكثر من حساب منتسب واحد",
-            });
-            router.replace("/profile");
-          }
-        } catch (error) {
-          console.error("Error checking candidates:", error);
-        }
-      }
-    }
-
-    checkExistingCandidate();
-  }, [mode, router]);
-
   // Get user data from storage on client side only
   useEffect(() => {
     const user = userStorage.getUser();
@@ -140,6 +112,7 @@ export function CandidateForm({
         form.setValue("full_name", `${user.first_name} ${user.last_name}`);
       }
     } else {
+      toast.error("يجب تسجيل الدخول لتسجيل المنتسب");
       router.replace("/login");
     }
   }, [form, router, mode]);
@@ -154,6 +127,7 @@ export function CandidateForm({
 
           if (!candidateData) {
             setError("المرشح غير موجود");
+            toast.error("المرشح غير موجود");
             router.push("/profile");
             return;
           }
@@ -162,6 +136,7 @@ export function CandidateForm({
           const user = userStorage.getUser();
           if (!user || candidateData.creator_id !== user.id) {
             setError("ليس لديك صلاحية تعديل هذا المرشح");
+            toast.error("ليس لديك صلاحية تعديل هذا المرشح");
             router.push("/profile");
             return;
           }
@@ -184,6 +159,7 @@ export function CandidateForm({
         } catch (error) {
           console.error("Error fetching candidate:", error);
           setError("حدث خطأ أثناء جلب بيانات المرشح");
+          toast.error("حدث خطأ أثناء جلب بيانات المرشح");
           router.push("/profile");
         } finally {
           setIsPending(false);
@@ -233,6 +209,7 @@ export function CandidateForm({
       return data.secure_url;
     } catch (error) {
       console.error("Error uploading image:", error);
+      toast.error("فشل في رفع الصورة");
       throw new Error("فشل في رفع الصورة");
     }
   }
@@ -244,6 +221,7 @@ export function CandidateForm({
 
       if (!userData) {
         setError("يجب تسجيل الدخول");
+        toast.error("يجب تسجيل الدخول");
         return;
       }
 
@@ -260,6 +238,7 @@ export function CandidateForm({
           candidateData.image_url = imageUrl;
         } catch (uploadError) {
           setError("فشل في رفع الصورة");
+          toast.error("فشل في رفع الصورة");
           return;
         }
       }
@@ -274,6 +253,7 @@ export function CandidateForm({
 
       if (result.error) {
         setError(result.error);
+        toast.error(result.error);
         return;
       }
 
@@ -287,6 +267,7 @@ export function CandidateForm({
     } catch (error) {
       console.error("Submission error:", error);
       setError(error instanceof Error ? error.message : "حدث خطأ ما");
+      toast.error("حدث خطأ ما");
     } finally {
       setIsPending(false);
     }

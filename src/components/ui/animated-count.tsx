@@ -1,61 +1,47 @@
 "use client";
 
-import { useInView, useMotionValue, useSpring } from "framer-motion";
-import { ComponentPropsWithoutRef, useEffect, useRef } from "react";
-import { cn } from "@/lib/utils";
+import { useSpring, animated } from "@react-spring/web";
+import { Loader2 } from "lucide-react";
 
-interface NumberTickerProps extends ComponentPropsWithoutRef<"span"> {
+export interface NumberTickerProps {
   value: number;
-  direction?: "up" | "down";
-  delay?: number; // delay in s
-  decimalPlaces?: number;
+  isLoading?: boolean;
+  label?: string;
+  className?: string;
 }
 
 export function NumberTicker({
   value,
-  direction = "up",
-  delay = 0,
-  className,
-  decimalPlaces = 0,
-  ...props
+  isLoading = false,
+  label,
+  className = "text-7xl font-bold tracking-tighter bg-gradient-to-br from-gray-900 to-gray-600 bg-clip-text text-transparent",
 }: NumberTickerProps) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const motionValue = useMotionValue(direction === "down" ? value : 0);
-  const springValue = useSpring(motionValue, {
-    damping: 60,
-    stiffness: 100,
+  const { number } = useSpring({
+    from: { number: 0 },
+    number: value,
+    delay: 200,
+    config: { mass: 1, tension: 20, friction: 10 },
   });
-  const isInView = useInView(ref, { once: true, margin: "0px" });
 
-  useEffect(() => {
-    if (isInView) {
-      setTimeout(() => {
-        motionValue.set(direction === "down" ? 0 : value);
-      }, delay * 1000);
-    }
-  }, [motionValue, isInView, delay, value, direction]);
-
-  useEffect(
-    () =>
-      springValue.on("change", (latest) => {
-        if (ref.current) {
-          ref.current.textContent = Intl.NumberFormat("ar-MA", {
-            minimumFractionDigits: decimalPlaces,
-            maximumFractionDigits: decimalPlaces,
-          }).format(Number(latest.toFixed(decimalPlaces)));
-        }
-      }),
-    [springValue, decimalPlaces]
-  );
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center gap-2">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        {label && (
+          <p className="text-lg text-muted-foreground font-medium">{label}</p>
+        )}
+      </div>
+    );
+  }
 
   return (
-    <span
-      ref={ref}
-      className={cn(
-        "inline-block tabular-nums tracking-wider font-bold bg-gradient-to-br from-primary to-primary/80 bg-clip-text text-transparent",
-        className
+    <div className="flex flex-col items-center gap-2">
+      <animated.span className={className}>
+        {number.to((n) => n.toFixed(0))}
+      </animated.span>
+      {label && (
+        <p className="text-lg text-muted-foreground font-medium">{label}</p>
       )}
-      {...props}
-    />
+    </div>
   );
 }

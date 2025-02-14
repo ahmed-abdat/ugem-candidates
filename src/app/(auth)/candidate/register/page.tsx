@@ -41,5 +41,9 @@ export default function CandidateRegisterPage() {
     checkExistingCandidate();
   }, [router]);
 
-  return <CandidateForm />;
+  return (
+    <div className="px-4 py-8 sm:px-6">
+      <CandidateForm />
+    </div>
+  );
 }

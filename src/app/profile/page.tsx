@@ -410,9 +410,9 @@ export default function ProfilePage() {
           {userCandidates.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle>المرشحون المسجلون</CardTitle>
+                <CardTitle>طلبات العضوية</CardTitle>
                 <CardDescription>
-                  قائمة المرشحين الذين قمت بتسجيلهم
+                  قائمة الطلبات التي قمت بتسجيلها
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -420,7 +420,7 @@ export default function ProfilePage() {
                   {userCandidates.map((candidate) => (
                     <div
                       key={candidate.id}
-                      className="flex items-center gap-4 p-4 rounded-lg bg-muted/50 hover:bg-muted/70 transition-colors group"
+                      className="flex items-center gap-4 p-4 rounded-lg bg-muted/50 hover:bg-muted/70 transition-colors"
                     >
                       {candidate.image_url ? (
                         <Image
@@ -448,11 +448,11 @@ export default function ProfilePage() {
                           {candidate.specialty} - {candidate.faculty}
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center gap-2">
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-8 w-8 p-0"
+                          className="h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary"
                           onClick={() =>
                             router.push(`/candidate/${candidate.id}/edit`)
                           }
@@ -472,7 +472,7 @@ export default function ProfilePage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-8 w-8 p-0"
+                          className="h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary"
                           onClick={() => setSelectedCandidate(candidate)}
                         >
                           <Eye className="h-4 w-4" />

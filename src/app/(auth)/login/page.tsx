@@ -8,5 +8,9 @@ export const metadata: Metadata = {
 };
 
 export default function LoginPage() {
-  return <LoginForm />;
+  return (
+    <div className="px-4 py-8 sm:px-6">
+      <LoginForm />
+    </div>
+  );
 }

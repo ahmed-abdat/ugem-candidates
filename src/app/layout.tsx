@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       <body
-        className={`${tajawal.variable} font-sans min-h-screen antialiased flex flex-col bg-dot-pattern relative`}
+        className={`${tajawal.variable} font-sans antialiased flex flex-col min-h-screen bg-dot-pattern relative`}
       >
         {/* Background decorative elements */}
         <div className="fixed inset-0 -z-10 h-full w-full bg-white">
@@ -41,8 +41,8 @@ export default function RootLayout({
         </div>
 
         <Header />
-        <main className="flex-1 md:py-4 py-2 relative bg-white">
-          <div className="mx-auto max-w-7xl px-2 sm:px-4 lg:px-6">
+        <main className="flex-1 flex flex-col relative">
+          <div className="p-3 md:p-6 flex-1 flex flex-col">
             {children}
           </div>
         </main>

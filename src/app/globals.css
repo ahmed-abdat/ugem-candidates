@@ -59,39 +59,130 @@
   }
 }
 
-/* Scrollbar Styles */
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply scroll-smooth antialiased;
+  }
+
+  body {
+    @apply bg-background text-foreground min-h-screen flex flex-col;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Smooth Scrolling & Scrollbar Styles */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  @apply w-2;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
-  border-radius: var(--radius);
+  @apply bg-background/50 rounded-full;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--primary));
-  border-radius: var(--radius);
-  border: 2px solid transparent;
-  background-clip: content-box;
-  transition: all 0.2s ease;
+  @apply bg-primary/50 rounded-full transition-colors hover:bg-primary/70;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--primary) / 0.8);
-  cursor: pointer;
-}
-
-/* Text Selection Styles */
+/* Selection Styles */
 ::selection {
-  background-color: hsl(var(--primary) / 0.15);
-  color: hsl(var(--primary));
+  @apply bg-primary/20 text-primary;
 }
 
-::-moz-selection {
-  background-color: hsl(var(--primary) / 0.15);
-  color: hsl(var(--primary));
+/* Focus Styles */
+:focus-visible {
+  @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
+}
+
+/* Transition Styles */
+.transition-all {
+  @apply duration-300 ease-in-out;
+}
+
+/* Form Element Styles */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: hsl(var(--foreground));
+  -webkit-box-shadow: 0 0 0px 1000px hsl(var(--background)) inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Dialog/Modal Animation */
+@keyframes dialog-overlay-show {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dialog-overlay-hide {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes dialog-content-show {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes dialog-content-hide {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+}
+
+/* Toast Animation */
+@keyframes toast-show {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes toast-hide {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
+/* Radix UI Popover Width Fix */
+[data-radix-popper-content-wrapper] {
+  @apply w-[95vw] sm:w-auto;
+}
+
+/* Prevent Text Size Adjustment */
+html {
+  -webkit-text-size-adjust: 100%;
 }
 
 /* loader css */
@@ -148,21 +239,8 @@
 
 /* ? matieres option style */
 
-[data-radix-popper-content-wrapper] {
-  width: 95%;
-}
-
 @media screen and (min-width: 640px) {
   [data-radix-popper-content-wrapper] {
     width: 40%;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
   }
 }

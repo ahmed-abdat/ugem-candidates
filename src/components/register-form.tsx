@@ -22,7 +22,7 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { RegisterFormValues, registerSchema } from "@/lib/validations/register";
 import { isUserExist, signupUser } from "@/app/actions";
 import { cn } from "@/lib/utils";
-
+import { toast } from "sonner";
 interface AuthMessageProps {
   type: "error" | "success";
   message: string | null;
@@ -69,28 +69,31 @@ export function RegisterForm() {
 
       if (userExists?.id) {
         setError("البريد الإلكتروني مستخدم بالفعل");
+        toast.error("البريد الإلكتروني مستخدم بالفعل");
         return;
       }
 
       const result = await signupUser(values);
       if (result?.error) {
         setError(result.error);
-        console.log(result.error);
+        toast.error(result.error);
         return;
       }
 
+      toast.success("تم إنشاء الحساب بنجاح");
+
       router.replace("/login");
     } catch (error) {
-      console.log(error);
       setError(error instanceof Error ? error.message : "حدث خطأ ما");
+      toast.error("حدث خطأ ما");
     } finally {
       setIsPending(false);
     }
   }
 
   return (
-    <div className="w-full space-y-6">
-      <div className="flex justify-center">
+    <div className="w-full max-w-md mx-auto space-y-6 bg-card rounded-lg shadow-sm">
+      <div className="flex justify-center pt-6">
         <Image
           src="/logo.png"
           alt="UGEM Logo"
@@ -101,11 +104,9 @@ export function RegisterForm() {
         />
       </div>
 
-      <div className="flex flex-col space-y-1.5 text-center">
-        <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">
-          إنشاء حساب جديد
-        </h1>
-        <p className="text-xs sm:text-sm text-muted-foreground">
+      <div className="text-center space-y-1.5">
+        <h1 className="text-2xl font-bold tracking-tight">إنشاء حساب جديد</h1>
+        <p className="text-sm text-muted-foreground">
           أدخل بياناتك لإنشاء حساب جديد
         </p>
       </div>
@@ -113,7 +114,10 @@ export function RegisterForm() {
       <AuthMessage type="error" message={error} />
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-4 px-6 pb-6"
+        >
           <div className="flex flex-col sm:flex-row gap-3">
             <FormField
               control={form.control}

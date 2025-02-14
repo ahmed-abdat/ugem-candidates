@@ -14,5 +14,9 @@ interface EditCandidatePageProps {
 }
 
 export default function EditCandidatePage({ params }: EditCandidatePageProps) {
-  return <CandidateForm mode="edit" candidateId={params.id} />;
+  return (
+    <div className="px-4 py-8 sm:px-6">
+      <CandidateForm mode="edit" candidateId={params.id} />
+    </div>
+  );
 }

@@ -5,6 +5,7 @@ interface UserData {
   email: string;
   created_at: string;
   updated_at: string;
+  image_url?: string; // Optional image URL for user avatar
 }
 
 const USER_STORAGE_KEY = "ugem_user_data";

@@ -24,6 +24,7 @@ import { loginUser } from "@/app/actions";
 import { cn } from "@/lib/utils";
 import { userStorage } from "@/lib/storage";
 import { toast } from "sonner";
+import { useUserStore } from "@/lib/store";
 
 interface AuthMessageProps {
   type: "error" | "success";
@@ -66,34 +67,30 @@ export function LoginForm() {
       setIsPending(true);
 
       const result = await loginUser(values);
-      console.log("Login result:", result);
 
       if (result?.error) {
         setError(result.error);
+        toast.error(result.error);
         return;
       }
 
       if (result?.success && result.user) {
-        console.log("Storing user data:", result.user);
-        userStorage.setUser(result.user);
-        setTimeout(() => {
-          router.replace("/");
-          toast.success("تم تسجيل الدخول بنجاح");
-          router.refresh();
-        }, 1000);
+        useUserStore.getState().setUser(result.user);
+        toast.success("تم تسجيل الدخول بنجاح");
+        router.replace("/");
       }
     } catch (error) {
-      console.error("Login error:", error);
       setError(error instanceof Error ? error.message : "حدث خطأ ما");
+      toast.error("حدث خطأ ما");
     } finally {
       setIsPending(false);
     }
   }
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full max-w-md mx-auto space-y-6 bg-card rounded-lg shadow-sm">
       {/* Logo */}
-      <div className="flex justify-center">
+      <div className="flex justify-center pt-6">
         <Image
           src="/logo.png"
           alt="UGEM Logo"
@@ -104,11 +101,9 @@ export function LoginForm() {
         />
       </div>
 
-      <div className="flex flex-col space-y-1.5 text-center">
-        <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">
-          تسجيل الدخول
-        </h1>
-        <p className="text-xs sm:text-sm text-muted-foreground">
+      <div className="text-center space-y-1.5">
+        <h1 className="text-2xl font-bold tracking-tight">تسجيل الدخول</h1>
+        <p className="text-sm text-muted-foreground">
           أدخل بريدك الإلكتروني وكلمة المرور لتسجيل الدخول
         </p>
       </div>
@@ -116,7 +111,10 @@ export function LoginForm() {
       <AuthMessage type="error" message={error} />
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-4 px-6 pb-6"
+        >
           <FormField
             control={form.control}
             name="email"
