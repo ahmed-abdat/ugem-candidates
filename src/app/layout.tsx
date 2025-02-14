@@ -32,21 +32,21 @@ export const metadata: Metadata = {
     "تسجيل المنتسبين",
     "منصة الطلاب",
   ],
-  authors: [{ name: "UGEM", url: "https://ugem2006.net/" }],
+  authors: [{ name: "UGEM", url: "https://ugem-candidates.vercel.app/" }],
   creator: "UGEM",
   publisher: "UGEM",
-  metadataBase: new URL("https://ugem2006.net/"),
+  metadataBase: new URL("https://ugem-candidates.vercel.app/"),
   openGraph: {
     type: "website",
     locale: "ar_MA",
-    url: "https://ugem2006.net/",
+    url: "https://ugem-candidates.vercel.app/",
     title: "الإتحاد العام للطلبة الموريتانيين - UGEM",
     description:
       "المنصة الرسمية للإتحاد العام للطلبة الموريتانيين - منصة تسجيل وإدارة المنتسبين",
     siteName: "UGEM",
     images: [
       {
-        url: "/og-image.png",
+        url: "/api/og",
         width: 1200,
         height: 630,
         alt: "UGEM - الإتحاد العام للطلبة الموريتانيين",
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     title: "الإتحاد العام للطلبة الموريتانيين - UGEM",
     description:
       "المنصة الرسمية للإتحاد العام للطلبة الموريتانيين - منصة تسجيل وإدارة المنتسبين",
-    images: ["/og-image.png"],
+    images: ["/api/og"],
     creator: "@ugem",
     site: "@ugem",
   },

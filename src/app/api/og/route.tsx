@@ -18,134 +18,84 @@ export async function GET(req: NextRequest) {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: "#020817",
+            backgroundColor: "white",
             position: "relative",
           }}
         >
-          {/* Glow Effect */}
+          {/* Gradient Background */}
           <div
             style={{
               position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: "60%",
-              height: "512px",
+              inset: 0,
               background:
-                "radial-gradient(ellipse at center, rgba(255, 152, 0, 0.15), transparent 70%)",
-              opacity: 0.8,
-              borderRadius: "50%",
+                "linear-gradient(to bottom right, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05))",
             }}
           />
 
+          {/* Logo */}
+          <img
+            src="https://i.ibb.co/4Lj0c5D/logo.png"
+            alt="UGEM Logo"
+            style={{
+              width: "180px",
+              height: "180px",
+              marginBottom: "2rem",
+            }}
+          />
+
+          {/* Title */}
           <div
             style={{
               display: "flex",
-              width: "1000px",
-              padding: "48px",
+              flexDirection: "column",
               alignItems: "center",
-              justifyContent: "space-between",
-              position: "relative",
+              justifyContent: "center",
+              textAlign: "center",
+              padding: "20px",
+              gap: "1rem",
             }}
           >
-            {/* Content */}
             <div
               style={{
                 display: "flex",
                 flexDirection: "column",
-                gap: "24px",
-                maxWidth: "60%",
-                direction: "ltr",
-                textAlign: "left",
+                gap: "0.5rem",
               }}
             >
-              <div
+              <h1
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  padding: "8px 24px",
-                  background:
-                    "linear-gradient(to right, rgba(255, 152, 0, 0.1), rgba(255, 167, 38, 0.1))",
-                  borderRadius: "16px",
-                  justifyContent: "flex-start",
+                  fontSize: "72px",
+                  fontWeight: "bold",
+                  background: "linear-gradient(to right, #1a365d, #2563eb)",
+                  backgroundClip: "text",
+                  color: "transparent",
+                  margin: 0,
                 }}
               >
-                <span
-                  style={{
-                    fontSize: "24px",
-                    fontWeight: 500,
-                    color: "#FFA726",
-                  }}
-                >
-                  Plateforme UGEM
-                </span>
-              </div>
-
-              <div
+                UGEM
+              </h1>
+              <p
                 style={{
-                  fontSize: "56px",
-                  fontWeight: 700,
-                  color: "#ffffff",
-                  lineHeight: 1.1,
-                  marginBottom: "16px",
+                  fontSize: "36px",
+                  fontWeight: "medium",
+                  color: "#1a365d",
+                  margin: 0,
                 }}
               >
-                Union Générale
-              </div>
-
-              <div
-                style={{
-                  fontSize: "28px",
-                  color: "#94a3b8",
-                  lineHeight: 1.4,
-                }}
-              >
-                Des Étudiants Mauritaniens 🎓
-              </div>
+                Union Générale des Étudiants Mauritaniens
+              </p>
             </div>
 
-            {/* Logo */}
-            <div
+            <p
               style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "200px",
-                height: "200px",
-                borderRadius: "24px",
-                overflow: "hidden",
-                background:
-                  "linear-gradient(135deg, rgba(255, 152, 0, 0.1), rgba(255, 167, 38, 0.1))",
-                border: "1px solid rgba(255, 152, 0, 0.2)",
+                fontSize: "24px",
+                color: "#4b5563",
+                margin: 0,
+                marginTop: "1rem",
               }}
             >
-              <img
-                src="https://i.ibb.co/4Lj0c5D/logo.png"
-                alt="UGEM Logo"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "contain",
-                }}
-              />
-            </div>
-          </div>
-
-          {/* URL */}
-          <div
-            style={{
-              position: "absolute",
-              bottom: "32px",
-              padding: "12px 24px",
-              borderRadius: "12px",
-              background:
-                "linear-gradient(to right, rgba(255, 152, 0, 0.1), rgba(255, 167, 38, 0.1))",
-              color: "#FFA726",
-              fontSize: "20px",
-              fontWeight: 500,
-            }}
-          >
-            ugem-candidates.vercel.app
+              Plateforme d'inscription et de gestion des membres
+            </p>
           </div>
         </div>
       ),
@@ -154,30 +104,10 @@ export async function GET(req: NextRequest) {
         height: 630,
       }
     );
-  } catch (error: unknown) {
-    console.error("OG Image Generation Error:", error);
-    return new ImageResponse(
-      (
-        <div
-          style={{
-            height: "100%",
-            width: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "#020817",
-            color: "#ffffff",
-            fontSize: "32px",
-            fontWeight: 700,
-          }}
-        >
-          UGEM - Union Générale des Étudiants Mauritaniens
-        </div>
-      ),
-      {
-        width: 1200,
-        height: 630,
-      }
-    );
+  } catch (e) {
+    console.log(`${e}`);
+    return new Response(`Failed to generate the image`, {
+      status: 500,
+    });
   }
 }
