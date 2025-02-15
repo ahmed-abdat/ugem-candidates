@@ -274,7 +274,7 @@ export function CandidateForm({
   }
 
   return (
-    <div className="w-full max-w-md mx-auto space-y-6 bg-card rounded-lg shadow-sm">
+    <div className="w-full max-w-xl mx-auto space-y-6 bg-card rounded-lg shadow-sm">
       {/* Logo */}
       <div className="flex justify-center">
         <Image
