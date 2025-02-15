@@ -16,6 +16,8 @@ import {
   HelpCircle,
   ArrowLeft,
 } from "lucide-react";
+import { onAuthStateChanged } from "firebase/auth";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -38,8 +40,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { auth } from "@/config/firebase";
 import { signOut } from "firebase/auth";
-import { userStorage } from "@/lib/storage";
-import { ClientOnly } from "@/components/client-only";
 import { useUserCandidate } from "@/hooks/use-user-candidate";
 import { useUserStore } from "@/lib/store";
 
@@ -49,9 +49,25 @@ export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const { user: userData, setUser } = useUserStore();
   const { hasCandidate } = useUserCandidate(userData?.id);
+
+  // Listen to auth state changes
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        setUser(null);
+        if (mounted && !isLoggingOut) {
+          toast.error("تم تسجيل الخروج من حسابك");
+          router.push("/login");
+        }
+      }
+    });
+
+    return () => unsubscribe();
+  }, [setUser, router, mounted, isLoggingOut]);
 
   useEffect(() => {
     setMounted(true);
@@ -70,12 +86,17 @@ export function Header() {
 
   const handleLogout = async () => {
     try {
+      setIsLoggingOut(true);
       await signOut(auth);
       setUser(null);
       setIsOpen(false);
+      toast.success("تم تسجيل الخروج بنجاح");
       router.push("/login");
     } catch (error) {
       console.error("Error signing out:", error);
+      toast.error("حدث خطأ أثناء تسجيل الخروج");
+    } finally {
+      setIsLoggingOut(false);
     }
   };
 

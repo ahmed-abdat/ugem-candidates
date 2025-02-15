@@ -96,15 +96,6 @@ export function CandidatesTable({ initialCandidates }: CandidatesTableProps) {
                 <div className="grid grid-cols-2 gap-6 bg-muted/50 rounded-lg p-6">
                   <div className="space-y-2">
                     <h4 className="font-medium text-muted-foreground text-sm">
-                      رقم الهاتف
-                    </h4>
-                    <p className="text-lg font-medium">
-                      {selectedCandidate.phone}
-                    </p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <h4 className="font-medium text-muted-foreground text-sm">
                       التخصص
                     </h4>
                     <p className="text-lg font-medium">
@@ -121,7 +112,7 @@ export function CandidatesTable({ initialCandidates }: CandidatesTableProps) {
                     </p>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="col-span-2 space-y-2">
                     <h4 className="font-medium text-muted-foreground text-sm">
                       تاريخ التسجيل
                     </h4>
@@ -133,15 +124,6 @@ export function CandidatesTable({ initialCandidates }: CandidatesTableProps) {
                         month: "long",
                         day: "numeric",
                       })}
-                    </p>
-                  </div>
-
-                  <div className="col-span-2 space-y-2">
-                    <h4 className="font-medium text-muted-foreground text-sm">
-                      العنوان
-                    </h4>
-                    <p className="text-lg font-medium">
-                      {selectedCandidate.address}
                     </p>
                   </div>
                 </div>

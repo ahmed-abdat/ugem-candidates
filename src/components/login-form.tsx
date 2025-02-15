@@ -69,6 +69,31 @@ export function LoginForm() {
       const result = await loginUser(values);
 
       if (result?.error) {
+        // Handle specific Firebase auth errors
+        if (result.error.includes("auth/user-not-found")) {
+          setError("البريد الإلكتروني غير مسجل");
+          toast.error("البريد الإلكتروني غير مسجل");
+          return;
+        }
+        if (result.error.includes("auth/wrong-password")) {
+          setError("كلمة المرور غير صحيحة");
+          toast.error("كلمة المرور غير صحيحة");
+          return;
+        }
+        if (result.error.includes("auth/invalid-email")) {
+          setError("البريد الإلكتروني غير صالح");
+          toast.error("البريد الإلكتروني غير صالح");
+          return;
+        }
+        if (result.error.includes("auth/too-many-requests")) {
+          setError("تم تجاوز عدد المحاولات المسموح بها، يرجى المحاولة لاحقاً");
+          toast.error(
+            "تم تجاوز عدد المحاولات المسموح بها، يرجى المحاولة لاحقاً"
+          );
+          return;
+        }
+
+        // For any other errors
         setError(result.error);
         toast.error(result.error);
         return;

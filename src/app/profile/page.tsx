@@ -179,7 +179,7 @@ export default function ProfilePage() {
     }
 
     try {
-      const result = await deleteUserAccount(userData.id);
+      const result = await deleteUserAccount(userData);
 
       if (result.error) {
         toast.error(result.error);
@@ -589,22 +589,13 @@ export default function ProfilePage() {
                     />
                   </div>
                 )}
-                <h2 className="text-2xl font-bold text-center">
+                <h2 className="text-2xl font-bold text-center bg-gradient-to-br from-gray-900 to-gray-600 bg-clip-text text-transparent">
                   {selectedCandidate.full_name}
                 </h2>
               </div>
 
               {/* Candidate Details */}
               <div className="grid grid-cols-2 gap-6 bg-muted/50 rounded-lg p-6">
-                <div className="space-y-2">
-                  <h4 className="font-medium text-muted-foreground text-sm">
-                    رقم الهاتف
-                  </h4>
-                  <p className="text-lg font-medium">
-                    {selectedCandidate.phone}
-                  </p>
-                </div>
-
                 <div className="space-y-2">
                   <h4 className="font-medium text-muted-foreground text-sm">
                     التخصص
@@ -623,7 +614,7 @@ export default function ProfilePage() {
                   </p>
                 </div>
 
-                <div className="space-y-2">
+                <div className="col-span-2 space-y-2">
                   <h4 className="font-medium text-muted-foreground text-sm">
                     تاريخ التسجيل
                   </h4>
@@ -636,15 +627,6 @@ export default function ProfilePage() {
                         day: "numeric",
                       }
                     )}
-                  </p>
-                </div>
-
-                <div className="col-span-2 space-y-2">
-                  <h4 className="font-medium text-muted-foreground text-sm">
-                    العنوان
-                  </h4>
-                  <p className="text-lg font-medium">
-                    {selectedCandidate.address}
                   </p>
                 </div>
               </div>

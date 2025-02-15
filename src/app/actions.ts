@@ -4,7 +4,7 @@ import { db } from "@/config/firebase";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  deleteUser as deleteFirebaseUser,
+  deleteUser,
 } from "firebase/auth";
 import {
   collection,
@@ -327,7 +327,12 @@ export async function updateUser(
   }
 }
 
-export async function deleteUserAccount(userId: string) {
+export async function deleteUserAccount(user: UserData) {
+  if (!user) {
+    return { error: "لا يوجد مستخدم" };
+  }
+  console.log("Deleting user:", user);
+  const userId = user.id;
   try {
     // Delete user's candidates first
     const candidatesRef = collection(db, "candidates");
@@ -347,8 +352,9 @@ export async function deleteUserAccount(userId: string) {
 
     // Delete user from Firebase Auth
     const user = auth.currentUser;
+    console.log("Deleting user:", user);
     if (user) {
-      await deleteFirebaseUser(user);
+      await deleteUser(user);
     }
 
     return { success: true };
