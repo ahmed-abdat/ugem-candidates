@@ -104,20 +104,6 @@ export const columns: ColumnDef<Candidate>[] = [
     },
   },
   {
-    accessorKey: "phone",
-    header: "رقم الهاتف",
-    cell: ({ row }) => {
-      return <div className="font-medium pr-2">{row.getValue("phone")}</div>;
-    },
-  },
-  {
-    accessorKey: "address",
-    header: "العنوان",
-    cell: ({ row }) => {
-      return <div className="pr-2">{row.getValue("address")}</div>;
-    },
-  },
-  {
     id: "actions",
     header: "الإجراءات",
     cell: ({ row, table }) => {

@@ -54,8 +54,6 @@ export function DataTable<TData, TValue>({
       specialty: true,
       faculty: true,
       image_url: true,
-      phone: false,
-      address: false,
     });
   const [rowSelection, setRowSelection] = React.useState({});
 
@@ -124,14 +122,10 @@ export function DataTable<TData, TValue>({
                   >
                     {column.id === "full_name"
                       ? "الاسم الكامل"
-                      : column.id === "phone"
-                      ? "رقم الهاتف"
                       : column.id === "specialty"
                       ? "التخصص"
                       : column.id === "faculty"
                       ? "الكلية"
-                      : column.id === "address"
-                      ? "العنوان"
                       : column.id === "image_url"
                       ? "الصورة"
                       : column.id === "actions"
