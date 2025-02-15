@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { userStorage } from "@/lib/storage";
 
-export interface UserData {
+interface UserData {
   id: string;
   first_name: string;
   last_name: string;
