@@ -98,7 +98,7 @@ export async function GET(req: NextRequest) {
                   lineHeight: 1.4,
                 }}
               >
-                Plateforme d'inscription et de gestion des membres
+                Plateforme d&apos;inscription et de gestion des membres
               </div>
             </div>
 
