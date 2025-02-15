@@ -13,6 +13,14 @@ const tajawal = Tajawal({
   variable: "--font-tajawal",
 });
 
+// App name and metadata constants
+const APP_NAME = "الإتحاد العام للطلبة الموريتانيين - UGEM";
+const APP_DEFAULT_TITLE =
+  "الإتحاد العام للطلبة الموريتانيين - منصة تسجيل المنتسبين";
+const APP_TITLE_TEMPLATE = "%s - UGEM";
+const APP_DESCRIPTION =
+  "المنصة الرسمية للإتحاد العام للطلبة الموريتانيين - منصة تسجيل وإدارة المنتسبين";
+
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
@@ -22,28 +30,30 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "الإتحاد العام للطلبة الموريتانيين - UGEM",
-  description:
-    "المنصة الرسمية للإتحاد العام للطلبة الموريتانيين - منصة تسجيل وإدارة المنتسبين",
-  keywords: [
-    "UGEM",
-    "الإتحاد العام للطلبة الموريتانيين",
-    "طلاب موريتانيا",
-    "تسجيل المنتسبين",
-    "منصة الطلاب",
-  ],
-  authors: [{ name: "UGEM", url: "https://ugem-candidates.vercel.app/" }],
-  creator: "UGEM",
-  publisher: "UGEM",
   metadataBase: new URL("https://ugem-candidates.vercel.app/"),
+  applicationName: APP_NAME,
+  title: {
+    default: APP_DEFAULT_TITLE,
+    template: APP_TITLE_TEMPLATE,
+  },
+  description: APP_DESCRIPTION,
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: APP_DEFAULT_TITLE,
+  },
+  formatDetection: {
+    telephone: false,
+  },
   openGraph: {
     type: "website",
-    locale: "ar_MA",
+    siteName: APP_NAME,
+    title: {
+      default: APP_DEFAULT_TITLE,
+      template: APP_TITLE_TEMPLATE,
+    },
+    description: APP_DESCRIPTION,
     url: "https://ugem-candidates.vercel.app/",
-    title: "الإتحاد العام للطلبة الموريتانيين - UGEM",
-    description:
-      "المنصة الرسمية للإتحاد العام للطلبة الموريتانيين - منصة تسجيل وإدارة المنتسبين",
-    siteName: "UGEM",
     images: [
       {
         url: "/api/og",
@@ -55,13 +65,38 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "الإتحاد العام للطلبة الموريتانيين - UGEM",
-    description:
-      "المنصة الرسمية للإتحاد العام للطلبة الموريتانيين - منصة تسجيل وإدارة المنتسبين",
+    title: {
+      default: APP_DEFAULT_TITLE,
+      template: APP_TITLE_TEMPLATE,
+    },
+    description: APP_DESCRIPTION,
     images: ["/api/og"],
     creator: "@ugem",
     site: "@ugem",
   },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  keywords: [
+    "UGEM",
+    "الإتحاد العام للطلبة الموريتانيين",
+    "طلاب موريتانيا",
+    "تسجيل المنتسبين",
+    "منصة الطلاب",
+    "اتحاد الطلبة",
+    "موريتانيا",
+    "تسجيل الطلاب",
+    "جامعة نواكشوط",
+    "طلاب موريتانيين",
+  ],
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
