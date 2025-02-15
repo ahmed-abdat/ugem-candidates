@@ -18,123 +18,132 @@ export async function GET(req: NextRequest) {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: "white",
+            backgroundColor: "#020817",
             position: "relative",
-            overflow: "hidden",
           }}
         >
-          {/* Background Pattern */}
+          {/* Glow Effect */}
           <div
             style={{
               position: "absolute",
-              inset: 0,
-              backgroundImage: "radial-gradient(#e5e7eb 1px, transparent 1px)",
-              backgroundSize: "16px 16px",
-              maskImage:
-                "radial-gradient(ellipse 50% 50% at 50% 50%, black 70%, transparent 100%)",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: "60%",
+              height: "512px",
+              background:
+                "radial-gradient(ellipse at center, rgba(246, 142, 59, 0.15), transparent 70%)",
+              opacity: 0.8,
+              borderRadius: "50%",
             }}
           />
 
-          {/* Gradient Blobs */}
-          <div
-            style={{
-              position: "absolute",
-              top: "-40%",
-              right: "-40%",
-              width: "80%",
-              height: "80%",
-              borderRadius: "9999px",
-              background: "rgba(59, 130, 246, 0.05)",
-              filter: "blur(100px)",
-            }}
-          />
-          <div
-            style={{
-              position: "absolute",
-              bottom: "-30%",
-              left: "-30%",
-              width: "70%",
-              height: "70%",
-              borderRadius: "9999px",
-              background: "rgba(59, 130, 246, 0.05)",
-              filter: "blur(100px)",
-            }}
-          />
-
-          {/* Content Container */}
           <div
             style={{
               display: "flex",
-              flexDirection: "column",
+              width: "1000px",
+              padding: "48px",
               alignItems: "center",
-              justifyContent: "center",
-              zIndex: 10,
-              padding: "40px",
-              background: "rgba(255, 255, 255, 0.5)",
-              borderRadius: "24px",
-              backdropFilter: "blur(10px)",
-              border: "1px solid rgba(59, 130, 246, 0.1)",
+              justifyContent: "space-between",
+              position: "relative",
             }}
           >
-            {/* Logo */}
-            <img
-              src="https://i.ibb.co/4Lj0c5D/logo.png"
-              alt="UGEM Logo"
-              style={{
-                width: "160px",
-                height: "160px",
-                marginBottom: "2rem",
-                filter: "drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1))",
-              }}
-            />
-
-            {/* Title */}
+            {/* Content */}
             <div
               style={{
                 display: "flex",
                 flexDirection: "column",
-                alignItems: "center",
-                gap: "1rem",
-                textAlign: "center",
+                gap: "24px",
+                maxWidth: "60%",
+                textAlign: "left",
               }}
             >
-              <h1
+              <div
                 style={{
-                  fontSize: "80px",
-                  fontWeight: "bold",
-                  background: "linear-gradient(135deg, #3B82F6, #1D4ED8)",
-                  backgroundClip: "text",
-                  color: "transparent",
-                  margin: 0,
-                  lineHeight: 1,
-                  filter: "drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))",
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "8px 24px",
+                  background:
+                    "linear-gradient(to right, rgba(246, 142, 59, 0.1), rgba(246, 142, 59, 0.1))",
+                  borderRadius: "16px",
                 }}
               >
-                UGEM
-              </h1>
-              <p
+                <span
+                  style={{
+                    fontSize: "24px",
+                    fontWeight: 500,
+                    color: "#F68E3B",
+                  }}
+                >
+                  UGEM
+                </span>
+              </div>
+
+              <div
                 style={{
-                  fontSize: "32px",
-                  fontWeight: "500",
-                  color: "#1E293B",
-                  margin: 0,
-                  maxWidth: "600px",
-                  lineHeight: 1.3,
+                  fontSize: "56px",
+                  fontWeight: 700,
+                  color: "#ffffff",
+                  lineHeight: 1.1,
+                  marginBottom: "16px",
                 }}
               >
                 Union Générale des Étudiants Mauritaniens
-              </p>
-              <p
+              </div>
+
+              <div
                 style={{
-                  fontSize: "20px",
-                  color: "#64748B",
-                  margin: 0,
-                  marginTop: "0.5rem",
+                  fontSize: "28px",
+                  color: "#94a3b8",
+                  lineHeight: 1.4,
                 }}
               >
-                Plateforme d&apos;inscription et de gestion des membres
-              </p>
+                Plateforme d'inscription et de gestion des membres
+              </div>
             </div>
+
+            {/* Logo */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "200px",
+                height: "200px",
+                borderRadius: "24px",
+                overflow: "hidden",
+                background:
+                  "linear-gradient(135deg, rgba(246, 142, 59, 0.1), rgba(246, 142, 59, 0.1))",
+                border: "1px solid rgba(246, 142, 59, 0.2)",
+              }}
+            >
+              <img
+                src="https://i.ibb.co/4Lj0c5D/logo.png"
+                alt="UGEM Logo"
+                style={{
+                  width: "180px",
+                  height: "180px",
+                  objectFit: "contain",
+                }}
+              />
+            </div>
+          </div>
+
+          {/* URL */}
+          <div
+            style={{
+              position: "absolute",
+              bottom: "32px",
+              padding: "12px 24px",
+              borderRadius: "12px",
+              background:
+                "linear-gradient(to right, rgba(246, 142, 59, 0.1), rgba(246, 142, 59, 0.1))",
+              color: "#F68E3B",
+              fontSize: "20px",
+              fontWeight: 500,
+            }}
+          >
+            ugem-candidates.vercel.app
           </div>
         </div>
       ),
@@ -143,10 +152,30 @@ export async function GET(req: NextRequest) {
         height: 630,
       }
     );
-  } catch (e) {
-    console.log(`${e}`);
-    return new Response(`Failed to generate the image`, {
-      status: 500,
-    });
+  } catch (error) {
+    console.error("OG Image Generation Error:", error);
+    return new ImageResponse(
+      (
+        <div
+          style={{
+            height: "100%",
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "#020817",
+            color: "#ffffff",
+            fontSize: "32px",
+            fontWeight: 700,
+          }}
+        >
+          Union Générale des Étudiants Mauritaniens - UGEM
+        </div>
+      ),
+      {
+        width: 1200,
+        height: 630,
+      }
+    );
   }
 }
