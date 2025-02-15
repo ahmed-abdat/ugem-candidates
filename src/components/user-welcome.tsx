@@ -1,10 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, UserPlus } from "lucide-react";
+import { ArrowLeft, UserPlus, FileEdit } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useUserStore } from "@/lib/store";
+import { useUserCandidate } from "@/hooks/use-user-candidate";
 
 export function UserWelcome() {
+  const { user } = useUserStore();
+  const { hasCandidate } = useUserCandidate(user?.id);
+
   return (
     <div className="relative isolate">
       {/* Gradient background */}
@@ -20,34 +25,75 @@ export function UserWelcome() {
             <span className="text-primary">UGEM</span>
           </h1>
 
-          <p className="mt-6 text-lg leading-8 text-muted-foreground max-w-2xl mx-auto">
-            قم بتسجيل الدخول للانضمام إلى <span className="text-primary">عائلتك</span> في الاتحاد العام للطلاب
-            الموريتانيين <span className="text-primary">(UGEM)</span>
-          </p>
+          {user ? (
+            <>
+              <p className="mt-6 text-lg leading-8 text-muted-foreground max-w-2xl mx-auto">
+                {hasCandidate ? (
+                  <>
+                    مرحباً بك{" "}
+                    <span className="text-primary">{user.first_name}</span> !
+                    لقد قمت بالفعل بتسجيل بياناتك كمنتسب.
+                  </>
+                ) : (
+                  <>
+                    مرحباً بك{" "}
+                    <span className="text-primary">{user.first_name}</span> ! قم
+                    بتسجيل بياناتك كمنتسب في الاتحاد العام للطلاب الموريتانيين.
+                  </>
+                )}
+              </p>
 
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button
-              asChild
-              size="lg"
-              className="bg-primary hover:bg-primary/90 shadow-lg hover:shadow-primary/25 transition-all duration-200 group min-w-[160px]"
-            >
-              <Link href="/login" className="flex items-center gap-2">
-                تسجيل الدخول
-                <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
-              </Link>
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="border-primary/20 hover:bg-primary/5 hover:text-primary transition-all duration-200 group min-w-[160px]"
-            >
-              <Link href="/register" className="flex items-center gap-2">
-                إنشاء حساب
-                <UserPlus className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" />
-              </Link>
-            </Button>
-          </div>
+              <div className="mt-10 flex items-center justify-center">
+                {!hasCandidate && (
+                  <Button
+                    asChild
+                    size="lg"
+                    className="bg-primary hover:bg-primary/90 shadow-lg hover:shadow-primary/25 transition-all duration-200 group min-w-[200px]"
+                  >
+                    <Link
+                      href="/candidate/register"
+                      className="flex items-center gap-2"
+                    >
+                      تسجيل منتسب
+                      <FileEdit className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" />
+                    </Link>
+                  </Button>
+                )}
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="mt-6 text-lg leading-8 text-muted-foreground max-w-2xl mx-auto">
+                قم بتسجيل الدخول للانضمام إلى{" "}
+                <span className="text-primary">عائلتك</span> في الاتحاد العام
+                للطلاب الموريتانيين <span className="text-primary">(UGEM)</span>
+              </p>
+
+              <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Button
+                  asChild
+                  size="lg"
+                  className="bg-primary hover:bg-primary/90 shadow-lg hover:shadow-primary/25 transition-all duration-200 group min-w-[160px]"
+                >
+                  <Link href="/login" className="flex items-center gap-2">
+                    تسجيل الدخول
+                    <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
+                  </Link>
+                </Button>
+                <Button
+                  asChild
+                  size="lg"
+                  variant="outline"
+                  className="border-primary/20 hover:bg-primary/5 hover:text-primary transition-all duration-200 group min-w-[160px]"
+                >
+                  <Link href="/register" className="flex items-center gap-2">
+                    إنشاء حساب
+                    <UserPlus className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" />
+                  </Link>
+                </Button>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
