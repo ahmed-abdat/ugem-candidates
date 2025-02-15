@@ -226,7 +226,7 @@ export default function ProfilePage() {
 
   if (!userData) {
     return (
-      <div className="max-w-5xl">
+      <div className="max-w-5xl mx-auto p-6">
         <Card>
           <CardContent className="py-10">
             <div className="flex flex-col items-center justify-center text-center">
@@ -243,7 +243,7 @@ export default function ProfilePage() {
 
   return (
     <ClientOnly>
-      <div className="max-w-5xl">
+      <div className="max-w-5xl mx-auto p-0 md:p-6">
         <div className="space-y-8">
           {/* Profile Card */}
           <Card>
