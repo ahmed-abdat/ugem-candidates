@@ -43,8 +43,8 @@ export function UserWelcome() {
               className="border-primary/20 hover:bg-primary/5 hover:text-primary transition-all duration-200 group min-w-[160px]"
             >
               <Link href="/register" className="flex items-center gap-2">
-                <UserPlus className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" />
                 إنشاء حساب
+                <UserPlus className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" />
               </Link>
             </Button>
           </div>
